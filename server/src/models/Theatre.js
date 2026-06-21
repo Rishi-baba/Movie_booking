@@ -16,6 +16,14 @@ const theatreSchema = new mongoose.Schema(
             type: Number,
             required: [true, 'Please add a base ticket price'],
         },
+        screens: {
+            type: Number,
+            default: 1,
+        },
+        logo: {
+            url: { type: String },
+            publicId: { type: String }
+        },
     },
     {
         timestamps: true,

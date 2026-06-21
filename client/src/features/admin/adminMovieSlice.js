@@ -45,6 +45,19 @@ export const deleteMovie = createAsyncThunk('adminMovies/delete', async (id, thu
     }
   });
 
+// Update movie
+export const updateMovie = createAsyncThunk('adminMovies/update', async ({ id, movieData }, thunkAPI) => {
+    try {
+      const response = await api.put(`/admin/movies/${id}`, movieData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || error.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+});
+
 export const adminMovieSlice = createSlice({
   name: 'adminMovie',
   initialState,
@@ -89,6 +102,23 @@ export const adminMovieSlice = createSlice({
       // Delete Movie
       .addCase(deleteMovie.fulfilled, (state, action) => {
         state.movies = state.movies.filter((movie) => movie._id !== action.payload);
+      })
+      // Update Movie
+      .addCase(updateMovie.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateMovie.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        const index = state.movies.findIndex(movie => movie._id === action.payload._id);
+        if (index !== -1) {
+            state.movies[index] = action.payload;
+        }
+      })
+      .addCase(updateMovie.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
       });
   },
 });

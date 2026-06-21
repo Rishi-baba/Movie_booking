@@ -76,6 +76,7 @@ export const registerUser = async (req, res) => {
                 _id: user.id,
                 name: user.name,
                 email: user.email,
+                role: user.role,
                 accessToken,
             });
         } else {
@@ -117,6 +118,7 @@ export const loginUser = async (req, res) => {
                 _id: user.id,
                 name: user.name,
                 email: user.email,
+                role: user.role,
                 accessToken,
             });
         } else {

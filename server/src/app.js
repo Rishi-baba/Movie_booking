@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 // Route Imports
 import authRoutes from './routes/auth.routes.js';
@@ -20,11 +22,32 @@ import { errorHandler, notFound } from './middleware/error.middleware.js';
 
 const app = express();
 
-// Middlewares
+// Security Middlewares
+app.use(helmet()); // Set security HTTP headers
+
+// Global Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message: { message: 'Too many requests from this IP, please try again after 15 minutes' }
+});
+app.use('/api', limiter);
+
+// CORS Configuration
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.CLIENT_URL 
+    : ['http://localhost:5173', 'http://localhost:3000'],
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
+// Body parsing middlewares
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(cookieParser()); // Parse cookies
-app.use(cors()); // Enable CORS
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev')); // Request logging

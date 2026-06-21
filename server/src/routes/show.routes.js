@@ -1,27 +1,15 @@
 import express from 'express';
+import { getShows, getShowById, getShowSeats } from '../controllers/show.controller.js';
 
 const router = express.Router();
 
-// TODO: Implement Show Controller and add actual logic
+router.route('/')
+    .get(getShows);
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'Get all shows - Not implemented yet' });
-});
+router.route('/:id/seats')
+    .get(getShowSeats);
 
-router.get('/:id', (req, res) => {
-    res.status(200).json({ message: `Get show ${req.params.id} - Not implemented yet` });
-});
-
-router.post('/', (req, res) => {
-    res.status(201).json({ message: 'Create new show - Not implemented yet' });
-});
-
-router.put('/:id', (req, res) => {
-    res.status(200).json({ message: `Update show ${req.params.id} - Not implemented yet` });
-});
-
-router.delete('/:id', (req, res) => {
-    res.status(200).json({ message: `Delete show ${req.params.id} - Not implemented yet` });
-});
+router.route('/:id')
+    .get(getShowById);
 
 export default router;

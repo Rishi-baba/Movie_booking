@@ -1,17 +1,27 @@
 import axios from 'axios';
+import { updateAccessToken, logoutUser } from '../features/auth/authSlice';
 
 // Create a configured axios instance
 const api = axios.create({
-  baseURL: '/api', // Using Vite proxy or relative path if served together
+  baseURL: import.meta.env.VITE_API_URL || '/api', // Use env var in production, relative path in development proxy
   withCredentials: true, // For refresh token cookies
 });
+
+let store;
+
+export const setupInterceptorStore = (_store) => {
+  store = _store;
+};
 
 // Request interceptor to add the access token to headers
 api.interceptors.request.use(
   (config) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user && user.accessToken) {
-      config.headers.Authorization = `Bearer ${user.accessToken}`;
+    if (store) {
+      const state = store.getState();
+      const user = state.auth.user;
+      if (user && user.accessToken) {
+        config.headers.Authorization = `Bearer ${user.accessToken}`;
+      }
     }
     return config;
   },
@@ -32,11 +42,9 @@ api.interceptors.response.use(
         // Attempt to refresh the token
         const { data } = await axios.post('/api/auth/refresh', {}, { withCredentials: true });
         
-        // Update user in local storage with new token
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-          user.accessToken = data.accessToken;
-          localStorage.setItem('user', JSON.stringify(user));
+        // Update user in Redux store with new token
+        if (store) {
+          store.dispatch(updateAccessToken(data.accessToken));
         }
 
         // Retry the original request with the new token
@@ -44,8 +52,10 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         // If refresh fails, log the user out
-        localStorage.removeItem('user');
-        window.location.href = '/login'; // Redirect to login
+        if (store) {
+          store.dispatch(logoutUser());
+        }
+        window.location.href = '/auth'; // Redirect to auth
         return Promise.reject(refreshError);
       }
     }

@@ -7,7 +7,7 @@ import Show from '../models/Show.js';
  */
 export const createShow = async (req, res) => {
     try {
-        const { movieId, theatreId, date, time, format, priceMultiplier, seatConfiguration } = req.body;
+        const { movieId, theatreId, date, time, format, priceMultiplier, seatConfiguration, screenType } = req.body;
 
         if (!movieId || !theatreId || !date || !time) {
             return res.status(400).json({ message: 'Please provide all required fields' });
@@ -23,13 +23,20 @@ export const createShow = async (req, res) => {
             }
         }
 
+        const Theatre = (await import('../models/Theatre.js')).default;
+        const theatre = await Theatre.findById(theatreId);
+        const basePrice = theatre ? theatre.basePrice : 250;
+        const finalPriceMultiplier = priceMultiplier || 1.0;
+
         const show = await Show.create({
             movieId,
             theatreId,
             date,
             time,
             format: format || '2D',
-            priceMultiplier: priceMultiplier || 1.0,
+            price: basePrice * finalPriceMultiplier,
+            priceMultiplier: finalPriceMultiplier,
+            screenType: screenType || 'Curved',
             seatConfiguration: parsedSeatConfig || { rows: 10, columns: 10, bookedSeats: [] }
         });
 
@@ -69,7 +76,7 @@ export const updateShow = async (req, res) => {
             return res.status(404).json({ message: 'Show not found' });
         }
 
-        const { movieId, theatreId, date, time, format, priceMultiplier, seatConfiguration } = req.body;
+        const { movieId, theatreId, date, time, format, priceMultiplier, seatConfiguration, screenType } = req.body;
 
         if (movieId) show.movieId = movieId;
         if (theatreId) show.theatreId = theatreId;
@@ -77,6 +84,7 @@ export const updateShow = async (req, res) => {
         if (time) show.time = time;
         if (format) show.format = format;
         if (priceMultiplier) show.priceMultiplier = priceMultiplier;
+        if (screenType) show.screenType = screenType;
         
         if (seatConfiguration) {
             let parsedSeatConfig = seatConfiguration;

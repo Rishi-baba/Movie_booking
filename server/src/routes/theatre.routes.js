@@ -1,27 +1,12 @@
 import express from 'express';
+import { getTheatres, getTheatreById } from '../controllers/theatre.controller.js';
 
 const router = express.Router();
 
-// TODO: Implement Theatre Controller and add actual logic
+router.route('/')
+    .get(getTheatres);
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'Get all theatres - Not implemented yet' });
-});
-
-router.get('/:id', (req, res) => {
-    res.status(200).json({ message: `Get theatre ${req.params.id} - Not implemented yet` });
-});
-
-router.post('/', (req, res) => {
-    res.status(201).json({ message: 'Create new theatre - Not implemented yet' });
-});
-
-router.put('/:id', (req, res) => {
-    res.status(200).json({ message: `Update theatre ${req.params.id} - Not implemented yet` });
-});
-
-router.delete('/:id', (req, res) => {
-    res.status(200).json({ message: `Delete theatre ${req.params.id} - Not implemented yet` });
-});
+router.route('/:id')
+    .get(getTheatreById);
 
 export default router;

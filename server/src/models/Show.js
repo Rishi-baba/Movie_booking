@@ -6,11 +6,13 @@ const showSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Movie',
             required: true,
+            index: true,
         },
         theatreId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Theatre',
             required: true,
+            index: true,
         },
         date: {
             type: Date,
@@ -25,14 +27,23 @@ const showSchema = new mongoose.Schema(
             required: true,
             default: '2D',
         },
+        price: {
+            type: Number,
+            required: true,
+        },
         priceMultiplier: {
             type: Number,
             default: 1.0,
         },
         seatConfiguration: {
-            rows: { type: Number, default: 10 },
-            columns: { type: Number, default: 10 },
+            rows: { type: Number, default: 13 },
+            columns: { type: Number, default: 12 },
             bookedSeats: { type: [String], default: [] }
+        },
+        screenType: {
+            type: String,
+            enum: ['Curved', 'Plain'],
+            default: 'Curved'
         }
     },
     {
