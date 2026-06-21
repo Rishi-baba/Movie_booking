@@ -7,6 +7,7 @@ import { getTheatres } from '../../features/theatre/theatreSlice';
 import MovieCard from '../../components/mobile/MovieCard';
 import TheatreItem from '../../components/mobile/TheatreItem';
 import { getImageUrl } from '../../utils/helpers';
+import { MovieCardSkeleton, ListSkeleton } from '../../components/common/Skeletons';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -49,7 +50,11 @@ const HomePage = () => {
           <Search color="white" size={24} />
         </div>
         
-        {movies.length > 0 ? (
+        {isMoviesLoading && movies.length === 0 ? (
+          <div className="w-full h-full bg-gray-800 animate-pulse flex items-center justify-center">
+             {/* Empty pulse container instead of loading text */}
+          </div>
+        ) : movies.length > 0 ? (
           <>
             <div 
               className="flex h-full w-full transition-transform duration-700 ease-in-out"
@@ -88,7 +93,7 @@ const HomePage = () => {
             </div>
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-500">Loading...</div>
+          <div className="w-full h-full flex items-center justify-center text-gray-500">No movies available.</div>
         )}
       </div>
 
@@ -115,7 +120,12 @@ const HomePage = () => {
         {/* Movies List Horizontal Scroll */}
         <div className="flex overflow-x-auto pb-4 pt-2 hide-scrollbar -mx-[25px] px-[25px] snap-x items-center">
           {isMoviesLoading && movies.length === 0 ? (
-            <div className="text-sm text-gray-500">Loading movies...</div>
+            <>
+              <MovieCardSkeleton />
+              <MovieCardSkeleton />
+              <MovieCardSkeleton />
+              <MovieCardSkeleton />
+            </>
           ) : movies.length > 0 ? (
             <>
               {movies.map((movie, index) => (
@@ -156,22 +166,24 @@ const HomePage = () => {
             <button className="text-primary text-[12px] font-medium">View All</button>
           </div>
           
-          <div className="flex flex-col">
+          <div className="flex flex-col -mx-5">
             {isTheatresLoading ? (
-              <div className="text-sm text-gray-500">Loading theatres...</div>
+              <ListSkeleton items={3} />
             ) : theatres.length > 0 ? (
-              theatres.map(theatre => (
-                <TheatreItem 
-                  key={theatre._id}
-                  name={theatre.name}
-                  location={theatre.location}
-                  price={`₹${theatre.basePrice}`}
-                  logo={getImageUrl(theatre.logo) || 'https://cdn-icons-png.flaticon.com/512/2809/2809636.png'}
-                  onClick={() => navigate(`/theatres/${theatre._id}`, { state: { theatre } })}
-                />
-              ))
+              <div className="px-5">
+                {theatres.map(theatre => (
+                  <TheatreItem 
+                    key={theatre._id}
+                    name={theatre.name}
+                    location={theatre.location}
+                    price={`₹${theatre.basePrice}`}
+                    logo={getImageUrl(theatre.logo) || 'https://cdn-icons-png.flaticon.com/512/2809/2809636.png'}
+                    onClick={() => navigate(`/theatres/${theatre._id}`, { state: { theatre } })}
+                  />
+                ))}
+              </div>
             ) : (
-              <div className="text-sm text-gray-500">No theatres found.</div>
+              <div className="text-sm text-gray-500 px-5">No theatres found.</div>
             )}
           </div>
         </div>

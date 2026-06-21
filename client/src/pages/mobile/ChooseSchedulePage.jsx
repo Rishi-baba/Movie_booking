@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { setSelectedShow } from '../../features/booking/bookingSlice';
 import api from '../../utils/api';
 import { getImageUrl } from '../../utils/helpers';
+import { TextSkeleton } from '../../components/common/Skeletons';
 
 const ChooseSchedulePage = () => {
   const navigate = useNavigate();
@@ -57,9 +58,7 @@ const ChooseSchedulePage = () => {
 
   const formattedDate = selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) : '';
 
-  if (loading) {
-    return <div className="w-full h-full flex items-center justify-center bg-[#F9FAFB]">Loading schedules...</div>;
-  }
+  // No loading early return so we can render the skeleton in place
 
   return (
     <div className="flex-1 min-h-0 w-full flex flex-col bg-[#F9FAFB] relative pb-[76px]">
@@ -130,7 +129,14 @@ const ChooseSchedulePage = () => {
         </div>
 
         {/* Screens & Times */}
-        {Object.keys(screens).length === 0 ? (
+        {loading ? (
+          <div className="mt-8">
+            <TextSkeleton lines={3} />
+            <div className="mt-6">
+              <TextSkeleton lines={2} />
+            </div>
+          </div>
+        ) : Object.keys(screens).length === 0 ? (
           <p className="text-sm text-gray-500">No shows available for this format.</p>
         ) : (
           Object.keys(screens).map(screenName => (

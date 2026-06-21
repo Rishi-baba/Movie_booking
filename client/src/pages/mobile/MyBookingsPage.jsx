@@ -5,6 +5,7 @@ import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import { getImageUrl } from '../../utils/helpers';
 import QRCode from 'react-qr-code';
+import { TicketSkeleton } from '../../components/common/Skeletons';
 
 const MyBookingsPage = () => {
   const navigate = useNavigate();
@@ -162,8 +163,10 @@ const MyBookingsPage = () => {
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center h-40">
-          <p className="text-[14px] text-gray-500">Loading bookings...</p>
+        <div className="w-full px-5 flex flex-col items-center">
+          <TicketSkeleton />
+          <TicketSkeleton />
+          <TicketSkeleton />
         </div>
       ) : displayBookings.length > 0 ? (
         displayBookings.map(b => renderBookingCard(b, activeTab === 'My Bookings'))

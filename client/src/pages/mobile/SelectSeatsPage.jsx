@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { setSelectedSeats } from '../../features/booking/bookingSlice';
 import api from '../../utils/api';
+import { SeatMatrixSkeleton } from '../../components/common/Skeletons';
 
 const SelectSeatsPage = () => {
   const navigate = useNavigate();
@@ -76,9 +77,7 @@ const SelectSeatsPage = () => {
     }
   };
 
-  if (loading) {
-    return <div className="w-full h-full flex items-center justify-center bg-[#F9FAFB]">Loading seats...</div>;
-  }
+  // No loading early return so we can render the skeleton in place
 
   // Generate row labels dynamically
   const rowLabels = Array.from({ length: seatConfig.rows }).map((_, i) => String.fromCharCode(65 + i));
@@ -129,35 +128,39 @@ const SelectSeatsPage = () => {
         </div>
 
         {/* Seat Grid */}
-        <div className="flex flex-col items-center space-y-2 mb-8 overflow-x-auto hide-scrollbar">
-          {rowLabels.map((rowLabel, rIdx) => {
-            return (
-              <div key={rIdx} className="flex items-center space-x-1.5 w-full justify-center">
-                <span className="text-[12px] font-bold text-gray-700 w-4 text-center mr-2">{rowLabel}</span>
-                {Array.from({ length: seatConfig.columns }).map((_, cIdx) => {
-                  const seatNum = cIdx + 1;
-                  const seatId = `${rowLabel}${seatNum}`;
-                  const isOccupied = seatConfig.bookedSeats.includes(seatId) || (seatConfig.lockedSeats && seatConfig.lockedSeats.includes(seatId));
-                  const isSelected = selectedSeatsLocal.includes(seatId);
+        {loading ? (
+          <SeatMatrixSkeleton />
+        ) : (
+          <div className="flex flex-col items-center space-y-2 mb-8 overflow-x-auto hide-scrollbar">
+            {rowLabels.map((rowLabel, rIdx) => {
+              return (
+                <div key={rIdx} className="flex items-center space-x-1.5 w-full justify-center">
+                  <span className="text-[12px] font-bold text-gray-700 w-4 text-center mr-2">{rowLabel}</span>
+                  {Array.from({ length: seatConfig.columns }).map((_, cIdx) => {
+                    const seatNum = cIdx + 1;
+                    const seatId = `${rowLabel}${seatNum}`;
+                    const isOccupied = seatConfig.bookedSeats.includes(seatId) || (seatConfig.lockedSeats && seatConfig.lockedSeats.includes(seatId));
+                    const isSelected = selectedSeatsLocal.includes(seatId);
 
-                  let bgClass = "bg-white border-gray-300 text-gray-400";
-                  if (isOccupied) bgClass = "bg-[#94a3b8] border-[#94a3b8] text-white";
-                  if (isSelected) bgClass = "bg-primary border-primary text-white";
+                    let bgClass = "bg-white border-gray-300 text-gray-400";
+                    if (isOccupied) bgClass = "bg-[#94a3b8] border-[#94a3b8] text-white";
+                    if (isSelected) bgClass = "bg-primary border-primary text-white";
 
-                  return (
-                    <button 
-                      key={cIdx} 
-                      onClick={() => toggleSeat(seatId)}
-                      className={`min-w-[24px] h-6 flex items-center justify-center rounded text-[10px] font-bold border transition-colors ${bgClass}`}
-                    >
-                      {seatNum}
-                    </button>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
+                    return (
+                      <button 
+                        key={cIdx} 
+                        onClick={() => toggleSeat(seatId)}
+                        className={`min-w-[24px] h-6 flex items-center justify-center rounded text-[10px] font-bold border transition-colors ${bgClass}`}
+                      >
+                        {seatNum}
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Legend */}
         <div className="flex items-center justify-center space-x-6 border-t border-gray-200 pt-6">

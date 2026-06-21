@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import api from '../../utils/api';
 import TheatreItem from '../../components/mobile/TheatreItem';
 import { getImageUrl } from '../../utils/helpers';
+import { ListSkeleton } from '../../components/common/Skeletons';
 
 const SelectTheatrePage = () => {
   const navigate = useNavigate();
@@ -62,9 +63,7 @@ const SelectTheatrePage = () => {
     }
   });
 
-  if (loading) {
-    return <div className="w-full h-full flex items-center justify-center bg-[#F9FAFB]">Loading theatres...</div>;
-  }
+  // No loading early return here so we can show the skeleton in the layout
 
   return (
     <div className="flex-1 min-h-0 w-full flex flex-col bg-[#F9FAFB] relative pb-6">
@@ -125,17 +124,21 @@ const SelectTheatrePage = () => {
         </div>
 
         {/* Theatres List */}
-        <div className="flex flex-col space-y-2 pb-4">
-          {uniqueTheatres.length === 0 && !loading ? (
-            <p className="text-sm text-gray-500">No theatres playing on this date.</p>
+        <div className="flex flex-col space-y-2 pb-4 -mx-5">
+          {loading ? (
+            <ListSkeleton items={4} />
+          ) : uniqueTheatres.length === 0 ? (
+            <p className="text-sm text-gray-500 px-5">No theatres playing on this date.</p>
           ) : (
-            uniqueTheatres.map((theatre, idx) => (
-              <TheatreItem 
-                key={idx} 
-                {...theatre} 
-                onClick={() => navigate('/booking/schedule', { state: { theatre, selectedDate, movie: selectedMovie } })}
-              />
-            ))
+            <div className="px-5">
+              {uniqueTheatres.map((theatre, idx) => (
+                <TheatreItem 
+                  key={idx} 
+                  {...theatre} 
+                  onClick={() => navigate('/booking/schedule', { state: { theatre, selectedDate, movie: selectedMovie } })}
+                />
+              ))}
+            </div>
           )}
         </div>
       </div>

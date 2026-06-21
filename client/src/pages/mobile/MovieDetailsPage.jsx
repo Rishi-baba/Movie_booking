@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { getMovieById } from '../../features/movie/movieSlice';
 import { getImageUrl } from '../../utils/helpers';
+import { BannerSkeleton, TextSkeleton } from '../../components/common/Skeletons';
 
 const MovieDetailsPage = () => {
   const { id } = useParams();
@@ -39,7 +40,20 @@ const MovieDetailsPage = () => {
   ];
 
   if (isLoading || !selectedMovie) {
-    return <div className="w-full h-full flex items-center justify-center bg-[#F9FAFB]">Loading...</div>;
+    return (
+      <div className="flex-1 min-h-0 w-full flex flex-col bg-[#F9FAFB] relative overflow-hidden">
+        <BannerSkeleton />
+        <div className="px-5 pt-12">
+          <TextSkeleton lines={2} />
+          <div className="mt-8">
+            <TextSkeleton lines={4} />
+          </div>
+          <div className="mt-8">
+            <TextSkeleton lines={3} />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const bannerImage = selectedMovie?.banner?.url ? getImageUrl(selectedMovie.banner) : getImageUrl(selectedMovie?.poster);
