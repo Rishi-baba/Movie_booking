@@ -65,7 +65,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center pt-24 px-6 h-full w-full bg-[#F9FAFB] min-h-screen">
+    <div className="flex flex-col items-center pt-24 pb-12 px-6 h-full w-full bg-[#F9FAFB] min-h-screen overflow-x-hidden overflow-y-auto">
       
       {/* Logo Placeholder */}
       <div className="flex flex-col items-center mb-10">
