@@ -2,8 +2,10 @@ import axios from 'axios';
 import { updateAccessToken, logoutUser } from '../features/auth/authSlice';
 
 // Create a configured axios instance
+const baseURL = import.meta.env.VITE_API_URL || '/api'; // Use env var in production, relative path in development proxy
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api', // Use env var in production, relative path in development proxy
+  baseURL,
   withCredentials: true, // For refresh token cookies
 });
 
@@ -39,8 +41,8 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Attempt to refresh the token
-        const { data } = await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+        // Attempt to refresh the token using the correct base URL
+        const { data } = await axios.post(`${baseURL}/auth/refresh`, {}, { withCredentials: true });
         
         // Update user in Redux store with new token
         if (store) {
