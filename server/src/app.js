@@ -25,6 +25,9 @@ const app = express();
 // Security Middlewares
 app.use(helmet()); // Set security HTTP headers
 
+// Trust proxy required for Vercel/Render so express-rate-limit can read IPs
+app.set('trust proxy', 1);
+
 // Global Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
