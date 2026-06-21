@@ -68,15 +68,9 @@ const HomePage = () => {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute bottom-8 left-6 z-20 pointer-events-none">
-                    <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded tracking-wider uppercase shadow-md">
-                      Featured
-                    </span>
-                    <h2 className="text-white text-[24px] font-bold mt-2 leading-tight drop-shadow-lg max-w-[300px] truncate">
+                    <h2 className="text-white text-[24px] font-bold leading-tight drop-shadow-lg max-w-[300px] truncate">
                       {movie.title}
                     </h2>
-                    <p className="text-gray-300 text-[12px] mt-1 drop-shadow-md">
-                      {movie.genre?.join(', ')} • {movie.rating || '8.5'} ★
-                    </p>
                   </div>
                 </div>
               ))}

@@ -182,12 +182,14 @@ const MovieDetailsPage = () => {
         </div>
 
         {/* Action Button */}
-        <button 
-          onClick={() => navigate('/booking/theatre')}
-          className="w-full bg-primary text-white py-3.5 rounded-lg font-medium text-[15px] shadow-sm active:scale-95 transition-transform"
-        >
-          Get Tickets
-        </button>
+        {selectedMovie.status !== 'Coming Soon' && (
+          <button 
+            onClick={() => navigate('/booking/theatre')}
+            className="w-full bg-primary text-white py-3.5 rounded-lg font-medium text-[15px] shadow-sm active:scale-95 transition-transform"
+          >
+            Get Tickets
+          </button>
+        )}
         </div>
       </div>
     </div>
