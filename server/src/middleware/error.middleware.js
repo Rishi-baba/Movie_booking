@@ -1,4 +1,7 @@
 export const errorHandler = (err, req, res, next) => {
+    // Log the error so it shows up in Vercel logs!
+    console.error(`[Error] ${req.method} ${req.originalUrl}:`, err);
+
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
 
     res.status(statusCode);
